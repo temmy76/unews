@@ -6,8 +6,8 @@ const reactionSchema = mongoose.Schema({
 		ref: "member",
 	},
 	news_id: {
-		type: mongoose.shema,
-		ref: "member",
+		type: mongoose.SchemaTypes.ObjectId,
+		ref: "news",
 	},
 	like: { type: Boolean, default: false },
 	dislike: { type: Boolean, default: false },
