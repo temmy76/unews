@@ -8,5 +8,16 @@
 	</head>
 	<body>
 		<h1>Hello World</h1>
+		<button id="selector">Click me!</button>
+		<script>
+			fetch("http://localhost:3000/user/test")
+				.then(async (res) => await res.json())
+				.then((data) => {
+					console.log(data);
+					localStorage.setItem("token", data.name);
+				});
+
+			localStorage.setItem();
+		</script>
 	</body>
 </html>

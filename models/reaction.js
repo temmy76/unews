@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const reactionSchema = mongoose.Schema({
 	member_id: {
@@ -13,4 +13,4 @@ const reactionSchema = mongoose.Schema({
 	dislike: { type: Boolean, default: false },
 });
 
-module.exports = mongoose.model("reaction", reactionSchema);
+export default mongoose.model("reaction", reactionSchema);

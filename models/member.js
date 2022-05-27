@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const memberSchema = mongoose.Schema({
 	username: {
@@ -13,12 +13,13 @@ const memberSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	roles: {
+		type: String,
+		enum: ["ADMIN", "MEMBER"],
+		required: true,
+	},
 });
 
-memberSchema.pre("validate", function (next) {
-	const EmailRegex =
-		/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-	this.email.match(EmailRegex) ? this.email : this.email.concat("@gmail.com");
-});
 
-module.exports = mongoose.model("member", memberSchema);
+
+export default mongoose.model("member", memberSchema);

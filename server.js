@@ -1,9 +1,12 @@
-const express = require("express");
-const mongoose = require("mongoose");
+import "dotenv/config";
+import express from "express";
+import mongoose from "mongoose";
 const app = express();
+import memberRoute from "./routes/member";
+import newsRoute from "./routes/news";
 
 mongoose
-	.connect("mongodb://localhost/UNewsTest")
+	.connect(`mongodb://localhost/${process.env.DB_NAME}`)
 	.then(() => {
 		console.log("Database Connected!");
 	})
@@ -16,6 +19,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
+// app.use("/post");
+app.use("/api/user", memberRoute);
+app.get("/api/news", newsRoute);
 app.get("/", (req, res) => {
 	res.render("index");
 });

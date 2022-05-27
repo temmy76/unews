@@ -6,4 +6,4 @@ node_modules/
 !.vscode/extensions.json
 logs
 *.log
-.gitignore
+.env

@@ -3,8 +3,9 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
+	"type": "module",
 	"scripts": {
-		"devStart": "nodemon server.js"
+		"devStart": "nodemon --es-module-specifier-resolution=node server.js"
 	},
 	"keywords": [
 		"nodejs",
@@ -15,8 +16,11 @@
 	"author": "voltmon",
 	"license": "ISC",
 	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"dotenv": "^16.0.1",
 		"ejs": "^3.1.8",
 		"express": "^4.18.1",
+		"joi": "^17.6.0",
 		"mongoose": "^6.3.4"
 	},
 	"devDependencies": {

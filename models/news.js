@@ -1,18 +1,10 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const newsSchema = mongoose.Schema({
 	title: { type: String, required: true },
 	tags: { type: [String], required: true },
-	categort: { type: [String], required: true },
+	category: { type: [String], required: true },
 	owner: {
-		writer_id: {
-			type: mongoose.SchemaTypes.ObjectId,
-			ref: "member",
-		},
-		editor_id: {
-			type: mongoose.SchemaTypes.ObjectId,
-			ref: "member",
-		},
 		writer: String,
 		editor: String,
 	},
@@ -25,10 +17,6 @@ const newsSchema = mongoose.Schema({
 	date_published: Date,
 	views: Number,
 	comment: {
-		member_id: {
-			type: mongoose.SchemaTypes.ObjectId,
-			ref: "member",
-		},
 		username: String,
 		date_comment: Date,
 		desc_comment: String,
@@ -37,4 +25,4 @@ const newsSchema = mongoose.Schema({
 	num_of_dislike: Number,
 });
 
-module.exports = mongoose.model("news", newsSchema);
+export default mongoose.model("news", newsSchema);
