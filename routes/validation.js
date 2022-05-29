@@ -18,8 +18,4 @@ const loginValidation = (data) => {
 	return schema.validate(data);
 };
 
-const checkLogin = (req, res, next) => {
-	// ngecheck local storage kalo ada berarti bisa login kalo gak ada berarti balik ke page login
-};
-
 export { registerValidation, loginValidation };

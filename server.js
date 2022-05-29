@@ -20,8 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
 // app.use("/post");
-app.use("/api/user", memberRoute);
-app.get("/api/news", newsRoute);
+app.use("/member", memberRoute);
+app.use("/news", newsRoute);
 app.get("/", (req, res) => {
 	res.render("index");
 });
