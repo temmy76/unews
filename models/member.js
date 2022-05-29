@@ -20,6 +20,4 @@ const memberSchema = mongoose.Schema({
 	},
 });
 
-
-
 export default mongoose.model("member", memberSchema);
