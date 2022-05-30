@@ -6,10 +6,13 @@ import jwt from "jsonwebtoken";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-	// index
+router.get("/test", async (req, res) => {
+	// index awal
 	// res.render("news/new", { news: new News() });
-	res.send("TEST");
+	const news = await News.find();
+	// res.json(news);
+	console.log(news);
+	res.send(news);
 });
 
 router.get("/edit/:id", async (req, res) => {
@@ -71,16 +74,30 @@ router.post("/", async (req, res) => {
 		return;
 	}
 
-	res.json("terhapus");
+	res.json("like dihapus");
 });
 
 router.put("/:id", async (req, res) => {
+	// merefresh jumlah like pada suatu berita
 	const numLike = await Like.find({ news_id: req.params.id }).count();
 	// console.log(numLike);
 	const news = await News.findByIdAndUpdate(req.params.id, {
 		num_of_like: numLike,
 	});
 	res.json(news);
+});
+
+router.put("/publish/:id", async (req, res) => {
+	const admin = await Member.find({ username: req.body.username });
+
+	if (!admin) return res.json({ message: "User didn't exist" });
+	if (admin.roles !== "ADMIN")
+		return res.json({ message: "You are not ADMIN" });
+	const news = await News.findByIdAndUpdate(req.params.id, {
+		owner: { editor: admin._id },
+	});
+
+	res.send(news);
 });
 
 export { router as default };

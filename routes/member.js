@@ -13,12 +13,12 @@ router.post("/register", async (req, res) => {
 	if (emailExist) return res.send("This email already exist!");
 
 	const hashPassword = await bcrypt.hash(req.body.password, 10);
-
+	const role = req.body.roles.toUpperCase();
 	const member = new Member({
 		username: req.body.username,
 		password: hashPassword,
 		email: req.body.email,
-		roles: req.body.roles,
+		roles: role,
 	});
 
 	try {
