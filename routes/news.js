@@ -2,7 +2,6 @@ import { Router } from "express";
 import News from "../models/news";
 import Member from "../models/member";
 import Like from "../models/like";
-import jwt from "jsonwebtoken";
 
 const router = Router();
 
@@ -114,7 +113,8 @@ router.put("/publish/:id", async (req, res) => {
 	//publish berita
 	const admin = await Member.findOne({ username: req.body.username });
 
-	if (!admin) return res.json({ message: "User didn't exist" });
+	if (!admin || admin.roles === "RESTRICT")
+		return res.json({ message: "User didn't exist" });
 	if (admin.roles !== "ADMIN")
 		return res.json({ message: "You are not ADMIN" });
 	const news = await News.findById(req.params.id);

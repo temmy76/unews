@@ -22,8 +22,8 @@ router.post("/register", async (req, res) => {
 	});
 
 	try {
-		const test = await member.save();
-		res.send(test);
+		const registeredMember = await member.save();
+		res.json(registeredMember);
 	} catch (err) {
 		res.send(err);
 	}
@@ -43,12 +43,30 @@ router.post("/login", async (req, res) => {
 	const token = jwt.sign({ id: member._id }, process.env.JWT_SECRET);
 
 	res.json({ token: token });
-	res.redirect("index");
+	// res.redirect("index");
 });
 
 router.get("/", async (req, res) => {
 	const member = await Member.find();
-	res.send(member);
+	res.json(member);
+});
+
+router.put("/:id", async (req, res) => {
+	try {
+		const admin = await Member.findOne({ username: req.body.username });
+		if (!admin || admin.roles === "RESTRICT")
+			return res.json({ message: "User didn't exist!" });
+		if (admin.roles !== "ADMIN")
+			return res.json({ message: "You are not ADMIN" });
+
+		const member = await Member.findById(req.params.id);
+		member.roles = req.body.roles.toUpperCase();
+		member.save();
+		console.log(member);
+		res.json(member);
+	} catch (err) {
+		res.send(err);
+	}
 });
 
 export { router as default };
