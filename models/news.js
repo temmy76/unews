@@ -23,7 +23,7 @@ const newsSchema = mongoose.Schema({
 		immutable: true,
 	},
 	date_publish: Date,
-	views: Number,
+	views: { type: Number, default: 0 },
 	comment: {
 		member_id: {
 			type: mongoose.SchemaTypes.ObjectId,

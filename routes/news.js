@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
 	const news = await News.find();
 	let publishedNews = [];
 	for (let i = 0; i < news.length; i++) {
-		console.log(news);
+		// console.log(news[i]);
 		if (news[i].owner.editor) publishedNews.push(news[i]);
 	}
 	res.json(publishedNews);
@@ -23,10 +23,18 @@ router.get("/unpublished", async (req, res) => {
 	const news = await News.find();
 	let unpublishedNews = [];
 	for (let i = 0; i < news.length; i++) {
-		console.log(news);
+		// console.log(news[i]);
 		if (!news[i].owner.editor) unpublishedNews.push(news[i]);
 	}
 	res.json(unpublishedNews);
+});
+
+router.get("/berita/:id", async (req, res) => {
+	//counter views secara real time (setiap ada yang melihat berita langsung menambah)
+	let news = await News.findById(req.params.id);
+	news.views += 1;
+	news.save();
+	res.json(news);
 });
 
 router.get("/edit/:id", async (req, res) => {
@@ -68,8 +76,9 @@ router.post("/post", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-	await News.findByIdAndDelete(req.params.id);
-	res.redirect("/news");
+	const news = await News.findByIdAndDelete(req.params.id);
+	res.json(news);
+	// res.redirect("/news");
 });
 
 router.post("/", async (req, res) => {
@@ -115,7 +124,5 @@ router.put("/publish/:id", async (req, res) => {
 	news.save();
 	res.json(news);
 });
-
-router.delete("/:id", async (req, res) => {});
 
 export { router as default };
