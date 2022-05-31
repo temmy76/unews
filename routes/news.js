@@ -6,13 +6,27 @@ import jwt from "jsonwebtoken";
 
 const router = Router();
 
-router.get("/test", async (req, res) => {
-	// index awal
+router.get("/", async (req, res) => {
+	// index awal dengan berita yang sudah dipublish oleh editor
 	// res.render("news/new", { news: new News() });
 	const news = await News.find();
-	// res.json(news);
-	console.log(news);
-	res.send(news);
+	let publishedNews = [];
+	for (let i = 0; i < news.length; i++) {
+		console.log(news);
+		if (news[i].owner.editor) publishedNews.push(news[i]);
+	}
+	res.json(publishedNews);
+});
+
+router.get("/unpublished", async (req, res) => {
+	// menampilkan post berita yang belum dipublish oleh editor
+	const news = await News.find();
+	let unpublishedNews = [];
+	for (let i = 0; i < news.length; i++) {
+		console.log(news);
+		if (!news[i].owner.editor) unpublishedNews.push(news[i]);
+	}
+	res.json(unpublishedNews);
 });
 
 router.get("/edit/:id", async (req, res) => {
@@ -88,16 +102,20 @@ router.put("/:id", async (req, res) => {
 });
 
 router.put("/publish/:id", async (req, res) => {
-	const admin = await Member.find({ username: req.body.username });
+	//publish berita
+	const admin = await Member.findOne({ username: req.body.username });
 
 	if (!admin) return res.json({ message: "User didn't exist" });
 	if (admin.roles !== "ADMIN")
 		return res.json({ message: "You are not ADMIN" });
-	const news = await News.findByIdAndUpdate(req.params.id, {
-		owner: { editor: admin._id },
-	});
-
-	res.send(news);
+	const news = await News.findById(req.params.id);
+	news.owner.editor_id = admin._id;
+	news.owner.editor = admin.username;
+	news.date_publish = Date.now();
+	news.save();
+	res.json(news);
 });
+
+router.delete("/:id", async (req, res) => {});
 
 export { router as default };

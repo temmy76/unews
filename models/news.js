@@ -22,7 +22,7 @@ const newsSchema = mongoose.Schema({
 		default: Date.now(),
 		immutable: true,
 	},
-	date_published: Date,
+	date_publish: Date,
 	views: Number,
 	comment: {
 		member_id: {
