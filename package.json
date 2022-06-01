@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"devStart": "nodemon --es-module-specifier-resolution=node server.js"
+		"start": "nodemon --es-module-specifier-resolution=node server.js"
 	},
 	"keywords": [
 		"nodejs",

@@ -17,6 +17,7 @@ const memberSchema = mongoose.Schema({
 		type: String,
 		enum: ["ADMIN", "MEMBER", "RESTRICT"],
 		required: true,
+		default: "MEMBER",
 	},
 });
 

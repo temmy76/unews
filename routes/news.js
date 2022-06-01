@@ -42,6 +42,32 @@ router.get("/edit/:id", async (req, res) => {
 	res.render("news/edit", { news: news });
 });
 
+router.put("/berita/:id", async (req, res) => {
+	let news = await News.findById(req.params.id);
+	const member = await Member.findOne({ username: req.body.username });
+
+	if (!member || member.roles === "RESTRICT")
+		return res.json({ message: "User didn't exist" });
+
+	if (req.body.username !== news.owner.writer && member.roles !== "ADMIN")
+		return res.json({
+			message: "You are not Owner of this news",
+		});
+
+	news.title = req.body.title;
+	news.tags = req.body.tags;
+	news.category = req.body.category;
+	news.description = req.body.description;
+	news.date_publish = Date.now();
+
+	try {
+		const updatedNews = await news.save();
+		res.json(updatedNews);
+	} catch (error) {
+		res.send(error);
+	}
+});
+
 router.get("/:id", async (req, res) => {
 	// buat ngeliat page berita
 	const news = await News.findById(req.params.id);
@@ -117,12 +143,21 @@ router.put("/publish/:id", async (req, res) => {
 		return res.json({ message: "User didn't exist" });
 	if (admin.roles !== "ADMIN")
 		return res.json({ message: "You are not ADMIN" });
-	const news = await News.findById(req.params.id);
-	news.owner.editor_id = admin._id;
-	news.owner.editor = admin.username;
-	news.date_publish = Date.now();
-	news.save();
-	res.json(news);
+	try {
+		const news = await News.findById(req.params.id);
+		news.owner.editor_id = admin._id;
+		news.owner.editor = admin.username;
+		news.date_publish = Date.now();
+		news.save();
+		res.json(news);
+	} catch (error) {
+		res.send(error);
+	}
+});
+
+router.put("/berita/:id", async (req, res) => {
+	// komentar pada berita
+	const member = await Member.findOne({ username: req.body.username });
 });
 
 export { router as default };
