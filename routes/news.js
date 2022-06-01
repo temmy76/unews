@@ -2,6 +2,7 @@ import { Router } from "express";
 import News from "../models/news";
 import Member from "../models/member";
 import Like from "../models/like";
+import bcrypt from "bcryptjs";
 
 const router = Router();
 
@@ -28,7 +29,7 @@ router.get("/unpublished", async (req, res) => {
 	res.json(unpublishedNews);
 });
 
-router.get("/berita/:id", async (req, res) => {
+router.get("/feed/:id", async (req, res) => {
 	//counter views secara real time (setiap ada yang melihat berita langsung menambah)
 	let news = await News.findById(req.params.id);
 	news.views += 1;
@@ -42,12 +43,12 @@ router.get("/edit/:id", async (req, res) => {
 	res.render("news/edit", { news: news });
 });
 
-router.put("/berita/:id", async (req, res) => {
+router.put("/feed/:id", async (req, res) => {
 	let news = await News.findById(req.params.id);
 	const member = await Member.findOne({ username: req.body.username });
 
 	if (!member || member.roles === "RESTRICT")
-		return res.json({ message: "User didn't exist" });
+		return res.json({ message: "Member doesn't exist!" });
 
 	if (req.body.username !== news.owner.writer && member.roles !== "ADMIN")
 		return res.json({
@@ -140,7 +141,7 @@ router.put("/publish/:id", async (req, res) => {
 	const admin = await Member.findOne({ username: req.body.username });
 
 	if (!admin || admin.roles === "RESTRICT")
-		return res.json({ message: "User didn't exist" });
+		return res.json({ message: "Member doesn't exist!" });
 	if (admin.roles !== "ADMIN")
 		return res.json({ message: "You are not ADMIN" });
 	try {
@@ -155,9 +156,32 @@ router.put("/publish/:id", async (req, res) => {
 	}
 });
 
-router.put("/berita/:id", async (req, res) => {
+router.put("/feed/comment/:id", async (req, res) => {
 	// komentar pada berita
 	const member = await Member.findOne({ username: req.body.username });
+	let news = await News.findById(req.params.id);
+
+	if (!member || member.roles === "RESTRICT")
+		return res.json({ message: "Member doesn't exist!" });
+
+	const comment_id = await bcrypt.hash(Math.random().toString(), 10);
+	console.log(typeof comment_id);
+	news.comment.push({
+		comment_id: comment_id,
+		member_id: member._id,
+		username: member.username,
+		date_comment: Date.now(),
+		desc_comment: req.body.description,
+	});
+
+	try {
+		const savedComment = await news.save();
+		res.json(savedComment);
+	} catch (error) {
+		res.send(error);
+	}
 });
+
+router.put("/feed/delcomment/:id", async (req, res) => {});
 
 export { router as default };

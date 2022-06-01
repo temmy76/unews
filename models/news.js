@@ -24,15 +24,18 @@ const newsSchema = mongoose.Schema({
 	},
 	date_publish: Date,
 	views: { type: Number, default: 0 },
-	comment: {
-		member_id: {
-			type: mongoose.SchemaTypes.ObjectId,
-			ref: "member",
+	comment: [
+		{
+			comment_id: { type: String, immutable: true },
+			member_id: {
+				type: mongoose.SchemaTypes.ObjectId,
+				ref: "member",
+			},
+			username: String,
+			date_comment: Date,
+			desc_comment: String,
 		},
-		username: String,
-		date_comment: Date,
-		desc_comment: String,
-	},
+	],
 	num_of_like: { type: Number, default: 0 },
 });
 

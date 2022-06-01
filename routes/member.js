@@ -35,7 +35,7 @@ router.post("/login", async (req, res) => {
 	if (error) return res.send(error.details[0].message);
 
 	const member = await Member.findOne({ email: req.body.email });
-	if (!member) return res.send("This member doesn't exist!");
+	if (!member) return res.json({ message: "Member doesn't exist!" });
 
 	const validPass = await bcrypt.compare(req.body.password, member.password);
 
@@ -58,7 +58,7 @@ router.put("/:id", async (req, res) => {
 	try {
 		const admin = await Member.findOne({ username: req.body.username });
 		if (!admin || admin.roles === "RESTRICT")
-			return res.json({ message: "User didn't exist!" });
+			return res.json({ message: "Member doesn't exist!" });
 		if (admin.roles !== "ADMIN")
 			return res.json({ message: "You are not ADMIN" });
 
