@@ -26,7 +26,6 @@ const newsSchema = mongoose.Schema({
 	views: { type: Number, default: 0 },
 	comment: [
 		{
-			comment_id: { type: String, immutable: true },
 			member_id: {
 				type: mongoose.SchemaTypes.ObjectId,
 				ref: "member",

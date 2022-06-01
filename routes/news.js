@@ -164,10 +164,7 @@ router.put("/feed/comment/:id", async (req, res) => {
 	if (!member || member.roles === "RESTRICT")
 		return res.json({ message: "Member doesn't exist!" });
 
-	const comment_id = await bcrypt.hash(Math.random().toString(), 10);
-	console.log(typeof comment_id);
 	news.comment.push({
-		comment_id: comment_id,
 		member_id: member._id,
 		username: member.username,
 		date_comment: Date.now(),
@@ -182,6 +179,22 @@ router.put("/feed/comment/:id", async (req, res) => {
 	}
 });
 
-router.put("/feed/delcomment/:id", async (req, res) => {});
+router.put("/feed/comment/:id/:comment_id", async (req, res) => {
+	const admin = await Member.findOne({ username: req.body.username });
+	let news = await News.findById(req.params.id);
+
+	if (!admin || admin.roles === "RESTRICT")
+		return res.json({ message: "Member doesn't exist" });
+
+	if (admin.roles !== "ADMIN")
+		return res.json({ message: "You are not ADMIN" });
+	const deletedComment = await News.updateOne(
+		{ _id: news._id },
+		{
+			$pull: { comment: { _id: req.params.comment_id } },
+		}
+	);
+	res.json(news);
+});
 
 export { router as default };
