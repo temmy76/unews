@@ -2,7 +2,6 @@ import { Router } from "express";
 import News from "../models/news";
 import Member from "../models/member";
 import Like from "../models/like";
-import bcrypt from "bcryptjs";
 
 const router = Router();
 
@@ -32,6 +31,8 @@ router.get("/unpublished", async (req, res) => {
 router.get("/feed/:id", async (req, res) => {
 	//counter views secara real time (setiap ada yang melihat berita langsung menambah)
 	let news = await News.findById(req.params.id);
+	if (!news.date_publish)
+		return res.json({ message: "This news is not published yet" });
 	news.views += 1;
 	news.save();
 	res.json(news);
@@ -44,6 +45,7 @@ router.get("/edit/:id", async (req, res) => {
 });
 
 router.put("/feed/:id", async (req, res) => {
+	// edit berita (real)
 	let news = await News.findById(req.params.id);
 	const member = await Member.findOne({ username: req.body.username });
 
@@ -69,16 +71,13 @@ router.put("/feed/:id", async (req, res) => {
 	}
 });
 
-router.get("/:id", async (req, res) => {
-	// buat ngeliat page berita
-	const news = await News.findById(req.params.id);
-
-	if (news == null) res.redirect("/");
-	req.render("news/show", { news: news });
-});
-
 router.post("/post", async (req, res) => {
 	// post berita baru
+	const member = await Member.findById(req.body.owner.writer_id);
+
+	if (!member || member.roles === "RESTRICT")
+		return res.json({ message: "Member doesn't exist!" });
+
 	let news = new News({
 		title: req.body.title,
 		tags: req.body.tags,
@@ -90,7 +89,6 @@ router.post("/post", async (req, res) => {
 	});
 
 	try {
-		const member = await Member.findById(news.owner.writer_id);
 		news.owner.writer = member.username;
 		news = await news.save();
 		// res.redirect(`/news/${news._id}`);
@@ -109,6 +107,11 @@ router.delete("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
 	// buat like dan unlike
+	const member = Member.findById(req.body.member_id);
+
+	if (!member || member.roles === "RESTRICT")
+		return res.json({ message: "You are restricted to do anything" });
+
 	let like = await Like.findOneAndDelete({
 		news_id: req.body.news_id,
 		member_id: req.body.member_id,
@@ -123,7 +126,7 @@ router.post("/", async (req, res) => {
 		return;
 	}
 
-	res.json("like dihapus");
+	res.json({ message: "like dihapus" });
 });
 
 router.put("/:id", async (req, res) => {
@@ -194,6 +197,26 @@ router.put("/feed/comment/:id/:comment_id", async (req, res) => {
 			$pull: { comment: { _id: req.params.comment_id } },
 		}
 	);
+	res.json(news);
+});
+
+router.put("/feed/comment/:id/edit/:comment_id", async (req, res) => {
+	const member = await Member.findOne({ username: req.body.username });
+	let news = await News.findById(req.params.id);
+
+	if (!member || member.roles === "RESTRICT")
+		return res.json({ message: "Member doesn't exist!" });
+
+	const editedComment = await News.updateOne(
+		{ _id: news._id, "comment._id": req.params.comment_id },
+		{
+			$set: {
+				"comment.$.date_comment": Date.now(),
+				"comment.$.desc_comment": req.body.desc_comment,
+			},
+		}
+	);
+
 	res.json(news);
 });
 
