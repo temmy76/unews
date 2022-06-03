@@ -2,9 +2,9 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 const app = express();
-import memberRoute from "./routes/member";
-import newsRoute from "./routes/news";
-
+import memberRoute from "./routes/memberRoute";
+import newsRoute from "./routes/newsRoute";
+import likeRoute from "./routes/likeRoute";
 mongoose
 	.connect(`mongodb://localhost/${process.env.DB_NAME}`)
 	.then(() => {
@@ -22,6 +22,7 @@ app.set("view engine", "ejs");
 // app.use("/post");
 app.use("/member", memberRoute);
 app.use("/news", newsRoute);
+app.use("/like", likeRoute);
 app.get("/", (req, res) => {
 	res.render("index");
 });
