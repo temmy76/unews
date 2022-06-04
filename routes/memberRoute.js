@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/", memberController.getAllMember);
 
-// router.get("/search", memberController.search);
+router.get("/search", memberController.search);
 
 router.post("/register", memberController.register);
 

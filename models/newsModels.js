@@ -38,6 +38,7 @@ const newsSchema = mongoose.Schema({
 	num_of_like: Number,
 });
 
-newsSchema.index({ num_of_like: 1, title: 1, date_publish: -1 });
+newsSchema.index({ title: "text" });
+newsSchema.index({ title: 1, num_of_like: 1, date_publish: -1 });
 
 export default mongoose.model("news", newsSchema);

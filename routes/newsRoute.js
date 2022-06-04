@@ -10,7 +10,7 @@ router.get("/unpublished", newsController.showUnpublished);
 
 router.get("/feed/:id", newsController.refreshViews);
 
-// router.get("/search", newsController.search);
+router.get("/search", newsController.search);
 
 router.post("/post", newsController.uploadNews);
 

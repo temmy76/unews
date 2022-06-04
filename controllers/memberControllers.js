@@ -70,7 +70,14 @@ export default {
 			res.send(err);
 		}
 	},
-	search : async (req,res) =>{
-		
-	}
+	search: async (req, res) => {
+		const query = await Member.aggregate([
+			{
+				$match: { $text: { $search: req.body.query } },
+			},
+			{ $sort: { username: 1 } },
+		]);
+
+		res.json(query);
+	},
 };

@@ -19,7 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-// app.use("/post");
 app.use("/member", memberRoute);
 app.use("/news", newsRoute);
 app.use("/like", likeRoute);

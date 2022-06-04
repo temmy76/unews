@@ -114,7 +114,7 @@ export default {
 			const deletedLike = await Like.deleteMany({ news_id: req.params.id });
 			const deletedNews = await News.findByIdAndDelete(req.params.id);
 
-			res.json({ deletedLike: deletedLike, news: deletedNews });
+			res.json(deletedNews);
 		} catch (error) {
 			res.send(error);
 		}
@@ -152,6 +152,8 @@ export default {
 			news.owner.editor_id = admin._id;
 			news.owner.editor = admin.username;
 			news.date_publish = Date.now();
+			news.views = 0;
+			news.num_of_like = 0;
 			news.save();
 			res.json(news);
 		} catch (error) {
@@ -239,5 +241,13 @@ export default {
 		console.log(editedComment);
 		res.json(news);
 	},
-	search: async (req, res) => {},
+	search: async (req, res) => {
+		const query = await News.aggregate([
+			{
+				$match: { $text: { $search: req.body.query } },
+			},
+			{ $sort: { title: 1 } },
+		]);
+		res.json(query);
+	},
 };
