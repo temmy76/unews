@@ -4,7 +4,11 @@ import mongoose from "mongoose";
 const app = express();
 import memberRoute from "./routes/memberRoute";
 import newsRoute from "./routes/newsRoute";
+import News from "./models/newsModels";
 import likeRoute from "./routes/likeRoute";
+import path from "path";
+const __dirname = path.resolve();
+
 mongoose
 	.connect(`mongodb://localhost/${process.env.DB_NAME}`)
 	.then(() => {
@@ -17,12 +21,17 @@ mongoose
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use("/css", express.static(__dirname + "public/css"));
+app.use("/js", express.static(__dirname + "public/js"));
+app.use("/images", express.static(__dirname + "public/images"));
+app.use("/fonts", express.static(__dirname + "public/fonts"));
 app.set("view engine", "ejs");
 
 app.use("/member", memberRoute);
 app.use("/news", newsRoute);
 app.use("/like", likeRoute);
-app.get("/", (req, res) => {
+app.use("/", (req, res) => {
 	res.render("index");
 });
 

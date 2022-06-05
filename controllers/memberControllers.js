@@ -23,6 +23,7 @@ export default {
 		try {
 			const registeredMember = await member.save();
 			res.json(registeredMember);
+			// res.redirect("/member");
 		} catch (err) {
 			res.send(err);
 		}
@@ -43,13 +44,14 @@ export default {
 		const token = jwt.sign({ id: member._id }, process.env.JWT_SECRET);
 
 		res.json({ token: token });
-		// res.redirect("index");
+		// res.send(token);
 	},
 
 	getAllMember: async (req, res) => {
 		// mendapatkan semua list member
 		const member = await Member.find();
 		res.json(member);
+		// res.render("member/index", { members: member });
 	},
 
 	changeRoles: async (req, res) => {
@@ -79,5 +81,8 @@ export default {
 		]);
 
 		res.json(query);
+	},
+	delete: async (req, res) => {
+		return res.send("HI");
 	},
 };
