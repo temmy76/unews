@@ -36,4 +36,9 @@ export default {
 
 		res.json({ message: "like dihapus" });
 	},
+	getPostLike: async (req, res) => {
+		const like = await Like.find({ news_id: req.params.id });
+
+		res.json(like);
+	},
 };

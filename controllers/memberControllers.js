@@ -43,7 +43,7 @@ export default {
 
 		const token = jwt.sign({ id: member._id }, process.env.JWT_SECRET);
 
-		res.json({ token: token });
+		res.json({ message: `Welcome to Unews, ${member.username}`, token: token });
 		// res.send(token);
 	},
 
@@ -83,6 +83,42 @@ export default {
 		res.json(query);
 	},
 	delete: async (req, res) => {
-		return res.send("HI");
+		const admin = await Member.findOne({ username: req.body.username });
+
+		if (!admin || admin.roles === "RESTRICT")
+			return res.json({ message: "Member doesn't exist!" });
+
+		if (admin._id != req.params.id && admin.roles !== "ADMIN")
+			return res.json({ message: "You are not ADMIN" });
+		try {
+			const deletedMember = await Member.findByIdAndDelete(req.params.id);
+			res.json(deletedMember);
+		} catch (e) {
+			res.json(e);
+		}
+	},
+	editProfile: async (req, res) => {
+		const member = await Member.findById(req.params.id);
+		if (!member) return res.json({ message: "Member doesn't exist!" });
+
+		req.body.username === undefined ? member.username : req.body.username;
+		req.body.email === undefined ? member.email : req.body.email;
+
+		if (req.body.password === undefined) {
+			req.body.password = member.password;
+		} else {
+			req.body.password = await bcrypt.hash(req.body.password, 10);
+		}
+		try {
+			const updatedMember = await Member.findByIdAndUpdate(req.params.id, {
+				username: req.body.username,
+				password: req.body.password,
+				email: req.body.email,
+			});
+
+			res.json(updatedMember);
+		} catch (error) {
+			res.send(error);
+		}
 	},
 };

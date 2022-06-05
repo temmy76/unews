@@ -30,7 +30,7 @@ app.set("view engine", "ejs");
 
 app.use("/member", memberRoute);
 app.use("/news", newsRoute);
-app.use("/like", likeRoute);
+app.use("/reaction", likeRoute);
 app.use("/", (req, res) => {
 	res.render("index");
 });
