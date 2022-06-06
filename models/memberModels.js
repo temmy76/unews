@@ -22,6 +22,7 @@ const memberSchema = mongoose.Schema({
 	},
 });
 
+memberSchema.index({ username: 1 });
 memberSchema.index({ username: "text" });
-memberSchema.index({ username: 1, email: -1 });
+
 export default mongoose.model("member", memberSchema);

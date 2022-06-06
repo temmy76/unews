@@ -3,9 +3,15 @@ import Member from "../models/memberModels";
 import Like from "../models/likeModels";
 
 export default {
+	showAllNews: async (req, res) => {
+		const news = await News.find()
+			.populate("owner.writer_id", "username email")
+			.populate("owner.editor_id", "username email");
+		res.json(news);
+	},
 	showPublished: async (req, res) => {
 		// index awal dengan berita yang sudah dipublish oleh editor
-		const news = await News.find();
+		const news = await News.find({ $sort: { num_of_like: 1 } });
 		let publishedNews = [];
 		for (let i = 0; i < news.length; i++) {
 			// console.log(news[i]);

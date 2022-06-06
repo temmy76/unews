@@ -4,7 +4,9 @@ import likeController from "../controllers/likeController";
 
 const router = Router();
 
-router.get("/", newsController.showPublished);
+router.get("/", newsController.showAllNews);
+
+router.get("/published", newsController.showPublished);
 
 router.get("/unpublished", newsController.showUnpublished);
 

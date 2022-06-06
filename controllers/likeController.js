@@ -18,7 +18,7 @@ export default {
 			});
 
 		if (!member || member.roles === "RESTRICT")
-			return res.json({ message: "You are restricted to do anything" });
+			return res.json({ message: "Member doesn't exist!" });
 
 		let like = await Like.findOneAndDelete({
 			news_id: req.body.news_id,
